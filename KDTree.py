@@ -4,7 +4,7 @@ from scipy.spatial.distance import euclidean as distance
 from functools import lru_cache, cmp_to_key
 
 np.random.seed(0)
-points = np.random.random((1000,2))
+points = np.random.randint(0, 5, size=(5,2))
 
 class KDTree:
     class Node:
@@ -13,7 +13,7 @@ class KDTree:
             self.left = None
             self.right = None
             self.max_d = max_d
-            self.dimension = d // self.max_d
+            self.dimension = d % self.max_d
 
         def insert(self, n):
             d = self.dimension
@@ -112,6 +112,8 @@ class KDTree:
             m = len(ls) // 2
             self.insert(ls[m])
 
+            new_dim = (d + 1) % self.dims
+
             self.median_insert(ls[:m], (d + 1) % self.dims)
             self.median_insert(ls[m + 1:], (d + 1) % self.dims)
 
@@ -151,13 +153,13 @@ def find_distance(a, b):
 if __name__ == "__main__":
     from time import time
 
-    # points = [
+    # points = np.array([
     #     (1,1),
     #     (2,2),
     #     (2,1),
     #     (2,3),
     #     (4,5)
-    # ]
+    # ])
     tree = KDTree(2, points)
 
 
@@ -167,23 +169,39 @@ if __name__ == "__main__":
 
     t1 = time()
     NN = tree.find_neighbors(point, eps)
+    for p in points[1:]:
+        tree.find_neighbors(p, eps)
     t1 = time() - t1
 
-    t2 = time()
+    # t2 = time()
+    # for q in points:
+    #     d = find_distance(tuple(point), tuple(q))
+    #     if d < eps:
+    #         BF.append(q)
+    #
+    # for p in points[1:]:
+    #     for q in points:
+    #         d = find_distance(tuple(q), tuple(p))
+    # t2 = time() - t2
 
-    for p in points:
-        for q in points:
-            d = find_distance(tuple(q), tuple(p))
-            if d < eps:
-                BF.append(p)
+    from scipy.spatial import KDTree as rKD
 
-    t2 = time() - t2
+    tree2 = rKD(points)
+
+    t3 = time()
+    rNN = tree2.query_ball_point(point, eps, )
+    for p in points[1:]:
+        tree2.query_ball_point(p, eps, )
+    t3 = time() - t3
 
     print(t1)
     # print(NN)
-    print(t2)
+    # print(t2)
     # print(BF)
+    print(t3)
 
-    print(set([tuple(n) for n in NN]) == set(tuple(n) for n in BF))
+    # print(set([tuple(n) for n in NN]) == set(tuple(n) for n in BF))
+    # print(set([tuple(n) for n in points[rNN]]) == set(tuple(n) for n in BF))
+    print(set([tuple(n) for n in points[rNN]]) == set(tuple(n) for n in NN))
 
 
