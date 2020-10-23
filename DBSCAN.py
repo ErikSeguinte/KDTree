@@ -75,6 +75,9 @@ if __name__ == "__main__":
     results = classifier.predict()
     fig = px.scatter(x=points[:, 0], y=points[:, 1], color=[str(i) for i in classifier.clusters])
     fig.show()
+    fig.update_layout(
+        height = 600
+    )
     path = Path("plot")
 
     plotly.offline.plot(fig, filename=str(path))
@@ -85,10 +88,13 @@ if __name__ == "__main__":
     results2 = classifier2.fit_predict(points)
     fig2 = px.scatter(x=points[:, 0], y=points[:, 1], color=[str(i) for i in results2 ])
     # fig.show()
-    print(results2)
+    fig2.update_layout(
+        height = 600
+    )
     path = Path("plot2")
 
     plotly.offline.plot(fig2, filename=str(path))
-    fig.write_json("fig1.json")
+    fig.write_json("fig1.json", pretty = True)
     fig2.write_json("fig2.json")
+
 
