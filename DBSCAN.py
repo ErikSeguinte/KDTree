@@ -79,3 +79,16 @@ if __name__ == "__main__":
 
     plotly.offline.plot(fig, filename=str(path))
 
+    from sklearn.cluster import DBSCAN as DBSCAN2
+
+    classifier2 = DBSCAN2(eps=0.038, min_samples= 6, algorithm="kd_tree")
+    results2 = classifier2.fit_predict(points)
+    fig2 = px.scatter(x=points[:, 0], y=points[:, 1], color=[str(i) for i in results2 ])
+    # fig.show()
+    print(results2)
+    path = Path("plot2")
+
+    plotly.offline.plot(fig2, filename=str(path))
+    fig.write_json("fig1.json")
+    fig2.write_json("fig2.json")
+
